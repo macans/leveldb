@@ -145,15 +145,15 @@ unsigned char FilterKeyMatch(
 }
 
 int main(int argc, char** argv) {
-  leveldb_t* db;
-  leveldb_comparator_t* cmp;
-  leveldb_cache_t* cache;
-  leveldb_env_t* env;
-  leveldb_options_t* options;
-  leveldb_readoptions_t* roptions;
-  leveldb_writeoptions_t* woptions;
-  char* dbname;
-  char* err = NULL;
+  leveldb_t *db;
+  leveldb_comparator_t *cmp;
+  leveldb_cache_t *cache;
+  leveldb_env_t *env;
+  leveldb_options_t *options;
+  leveldb_readoptions_t *roptions;
+  leveldb_writeoptions_t *woptions;
+  char *dbname;
+  char *err = NULL;
   int run = -1;
 
   CheckCondition(leveldb_major_version() >= 1);
@@ -223,13 +223,13 @@ int main(int argc, char** argv) {
 
   StartPhase("writebatch");
   {
-    leveldb_writebatch_t* wb = leveldb_writebatch_create();
+    leveldb_writebatch_t *wb = leveldb_writebatch_create();
     leveldb_writebatch_put(wb, "foo", 3, "a", 1);
     leveldb_writebatch_clear(wb);
     leveldb_writebatch_put(wb, "bar", 3, "b", 1);
     leveldb_writebatch_put(wb, "box", 3, "c", 1);
 
-    leveldb_writebatch_t* wb2 = leveldb_writebatch_create();
+    leveldb_writebatch_t *wb2 = leveldb_writebatch_create();
     leveldb_writebatch_delete(wb2, "bar", 3);
     leveldb_writebatch_append(wb, wb2);
     leveldb_writebatch_destroy(wb2);
@@ -248,7 +248,7 @@ int main(int argc, char** argv) {
 
   StartPhase("iter");
   {
-    leveldb_iterator_t* iter = leveldb_create_iterator(db, roptions);
+    leveldb_iterator_t *iter = leveldb_create_iterator(db, roptions);
     CheckCondition(!leveldb_iter_valid(iter));
     leveldb_iter_seek_to_first(iter);
     CheckCondition(leveldb_iter_valid(iter));
@@ -275,10 +275,10 @@ int main(int argc, char** argv) {
     char keybuf[100];
     char valbuf[100];
     uint64_t sizes[2];
-    const char* start[2] = { "a", "k00000000000000010000" };
-    size_t start_len[2] = { 1, 21 };
-    const char* limit[2] = { "k00000000000000010000", "z" };
-    size_t limit_len[2] = { 21, 1 };
+    const char *start[2] = {"a", "k00000000000000010000"};
+    size_t start_len[2] = {1, 21};
+    const char *limit[2] = {"k00000000000000010000", "z"};
+    size_t limit_len[2] = {21, 1};
     leveldb_writeoptions_set_sync(woptions, 0);
     for (i = 0; i < n; i++) {
       snprintf(keybuf, sizeof(keybuf), "k%020d", i);
@@ -294,7 +294,7 @@ int main(int argc, char** argv) {
 
   StartPhase("property");
   {
-    char* prop = leveldb_property_value(db, "nosuchprop");
+    char *prop = leveldb_property_value(db, "nosuchprop");
     CheckCondition(prop == NULL);
     prop = leveldb_property_value(db, "leveldb.stats");
     CheckCondition(prop != NULL);
@@ -303,7 +303,7 @@ int main(int argc, char** argv) {
 
   StartPhase("snapshot");
   {
-    const leveldb_snapshot_t* snap;
+    const leveldb_snapshot_t *snap;
     snap = leveldb_create_snapshot(db);
     leveldb_delete(db, woptions, "foo", 3, &err);
     CheckNoError(err);
@@ -334,10 +334,10 @@ int main(int argc, char** argv) {
   for (run = 0; run < 2; run++) {
     // First run uses custom filter, second run uses bloom filter
     CheckNoError(err);
-    leveldb_filterpolicy_t* policy;
+    leveldb_filterpolicy_t *policy;
     if (run == 0) {
       policy = leveldb_filterpolicy_create(
-          NULL, FilterDestroy, FilterCreate, FilterKeyMatch, FilterName);
+              NULL, FilterDestroy, FilterCreate, FilterKeyMatch, FilterName);
     } else {
       policy = leveldb_filterpolicy_create_bloom(10);
     }
